@@ -49,7 +49,7 @@ sitios = tabla_sitios.sitio.tolist()
 
 wise_people = ['Lina Corrales', 'Esther Velásquez', 'Lina y Esther']
 
-digitizers = ['Lina Corrales', 'Esther Velásquez']
+digitizers = ['Lina', 'Esther', 'Nelson']
 
 id_observaciones = []
 
@@ -205,6 +205,11 @@ def submit():
 		st.session_state.cober,
 		st.session_state.pheno,
 	]
+	
+	if st.session_state.per_pheno: 
+		row.append(st.session_state.per_pheno)
+	else:
+		row.append("")
 	
 	if st.session_state.obs_ind: 
 		row.append(st.session_state.obs_ind)
@@ -431,8 +436,19 @@ if st.session_state.site_ok:
 			pheno,
 			index=None, 
 			key='pheno',
-			placeholder="Seleccione una forma de crecimiento",
-			help='Formas de crcimiento de acuerdo a la documentación del proyecto.'
+			placeholder="Estado fenológico del individuo",
+			help='Posible estado fenológico del individuo.'
+		)
+
+		st.number_input(
+			"Porcentaje fenología",
+			key='per_pheno',
+			value=None,
+			min_value=1,
+			max_value=100,
+			step=1,
+			placeholder="Estado fenológico del individuo (%).",
+			help='Posible estado fenológico del individuo. Posibles valores: 1-100%.'
 		)
 
 		st.text_input(
