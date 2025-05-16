@@ -51,6 +51,8 @@ wise_people = ['Lina Corrales', 'Esther Velásquez', 'Lina y Esther']
 
 digitizers = ['Lina', 'Esther', 'Nelson']
 
+subplots = ['2x2', '3x3', '6x6', '13x13', '20x20']
+
 id_observaciones = []
 
 growth_forms = ['Árbol', 'Arbusto', 'Hierba', 'Enredadera']
@@ -63,7 +65,7 @@ st.markdown("""
 
 ## Programa Conservación _in situ_
 
-### Formato de digitalización de transectos de vegetación.
+### Formato de digitalización de parcelas de vegetación.
 
 #### Instrucciones
 
@@ -83,8 +85,20 @@ def validate_site():
 		in_trouble = True
 
 	if st.session_state.date is None:
-		#st.info('Error: Falta fecha de observación.', icon="🔥")
 		st.session_state.errors_site += 'La fecha es un campo obligatorio.\n\n'
+		in_trouble = True
+
+	if st.session_state.time0 is None:
+		st.session_state.errors_site += 'La hora inicial es un campo obligatorio.\n\n'
+		in_trouble = True
+
+	if st.session_state.timef is None:
+		st.session_state.errors_site += 'La hora final es un campo obligatorio.\n\n'
+		in_trouble = True
+
+	if st.session_state.time0 and st.session_state.timef and \
+		st.session_state.time0 >= st.session_state.timef:
+		st.session_state.errors_site += 'La hora inicial debe ser menor a la hora final.\n\n'
 		in_trouble = True
 
 	if st.session_state.resp is None:
@@ -103,6 +117,10 @@ def validate_site():
 		st.session_state.errors_site += "El sitio es un campo obligatorio.\n\n"
 		in_trouble = True
 
+	if st.session_state.sector is None or len(st.session_state.sector) < 1:
+		st.session_state.errors_site += "El sector es un campo obligatorio.\n\n"
+		in_trouble = True
+
 	if not in_trouble:
 		st.session_state.site_ok = True
 
@@ -118,7 +136,7 @@ def validate_rec():
 		in_trouble = True
 
 	if st.session_state.subpar is None:
-		st.session_state.errors_rec += 'El número de subparcela es un campo obligatorio.\n\n'
+		st.session_state.errors_rec += 'La categoría de subparcela es un campo obligatorio.\n\n'
 		in_trouble = True
 
 	if st.session_state.ind is None:
@@ -133,20 +151,44 @@ def validate_rec():
 		st.session_state.errors_rec += 'El morfo o descripción de campo es un dato obligatorio.\n\n'
 		in_trouble = True
 
-	if st.session_state.alt is None:
-		st.session_state.errors_rec += 'La altura del individuo es un campo obligatorio.\n\n'
+	if st.session_state.subpar in ['3x3', '6x6', '13x13', '20x20'] and \
+		st.session_state.alt is None:
+
+		st.session_state.errors_rec += 'La altura del individuo es un campo obligatorio para subparcelas no herbáceas rasantes.\n\n'
 		in_trouble = True
 
-	if st.session_state.copax is None:
-		st.session_state.errors_rec += 'El diámetro de copa horizontal es un campo obligatorio.\n\n'
+	elif st.session_state.subpar == '3x3' and (st.session_state.alt < 0.5 or st.session_state.alt > 1.5):
+
+		st.session_state.errors_rec += 'La altura del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
 		in_trouble = True
 
-	if st.session_state.copay is None:
-		st.session_state.errors_rec += 'El diámetro de copa vertical es un campo obligatorio.\n\n'
+
+	if st.session_state.subpar in ['6x6', '13x13', '20x20'] and st.session_state.cap is None:
+		st.session_state.errors_rec += 'La circuferencia a la altura de pecho es un campo obligatorio para subparcelas no herbáceas.\n\n'
 		in_trouble = True
 
-	if st.session_state.cober is None:
-		st.session_state.errors_rec += 'La cobertura es un campo obligatorio.\n\n'
+	elif st.session_state.subpar == '6x6' and (st.session_state.cap < (2.5 / 3.14159) or st.session_state.cap > (5 / 3.14159)):
+		st.session_state.errors_rec += 'El CAP del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
+		in_trouble = True
+
+	elif st.session_state.subpar == '13x13' and (st.session_state.cap < (5 / 3.14159) or st.session_state.cap > (10 / 3.14159)):
+		st.session_state.errors_rec += 'El CAP del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
+		in_trouble = True
+
+	elif st.session_state.subpar == '20x20' and (st.session_state.cap < (10 / 3.14159)):
+		st.session_state.errors_rec += 'El CAP del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
+		in_trouble = True
+
+	if st.session_state.subpar in ['3x3', '6x6', '13x13', '20x20'] and st.session_state.copax is None:
+		st.session_state.errors_rec += 'El diámetro de copa horizontal es un campo obligatorio para subparcelas no herbáceas rasantes.\n\n'
+		in_trouble = True
+
+	if st.session_state.subpar in ['3x3', '6x6', '13x13', '20x20'] and st.session_state.copay is None:
+		st.session_state.errors_rec += 'El diámetro de copa vertical es un campo obligatorio para subparcelas no herbáceas rasantes.\n\n'
+		in_trouble = True
+
+	if st.session_state.subpar == '2x2' and st.session_state.cober is None:
+		st.session_state.errors_rec += 'La cobertura es un campo obligatorio para subparcelas de herbáceas rasantes.\n\n'
 		in_trouble = True
 
 	if st.session_state.pheno is None:
@@ -224,8 +266,18 @@ def submit():
 	sh.append_row(row)
 	st.session_state.submitted = True
 
-def submit_ind():
-	st.session_state.ind_data = st.empty()
+
+def clear_site():
+	st.session_state.resp = None
+	st.session_state.date = None
+	st.session_state.time0 = None
+	st.session_state.timef = None
+	st.session_state.site = None
+	st.session_state.sector = ''
+	st.session_state.lat = None
+	st.session_state.lon = None
+	st.session_state.obs_site = ''
+	st.session_state.site_ok = False
 
 
 with st.form(
@@ -250,7 +302,7 @@ with st.form(
 		help='Persona que se encargó de digitar el formulario'
 	)
 
-	st.selectbox(
+	resp = st.selectbox(
 		"Responsable", 
 		wise_people, 
 		index=None, 
@@ -294,6 +346,7 @@ with st.form(
 	st.text_input(
 		"Sector",
 		key='sector',
+		value='',
 		placeholder='Sector de muestreo',
 		help='Nombre del sector de muestreo'
 	)
@@ -326,13 +379,20 @@ with st.form(
 		help='Observaciones del sitio de muestreo.'
 	)
 
-	st.form_submit_button('Validar', on_click=validate_site)
+	b0, b1 = st.columns([1, 1])
+
+	with b0:
+		st.form_submit_button('Validar', on_click=validate_site)
+	with b1:
+		st.form_submit_button('Cambiar localidad', on_click=clear_site)
 
 
+rec_cont = st.empty()
 
 if st.session_state.site_ok:
 
-	with st.form(
+	with rec_cont.form(
+	#with st.form(
 		"Transecto - registros",
 		clear_on_submit=True
 	):
@@ -347,13 +407,12 @@ if st.session_state.site_ok:
 			help='Identificador de la parcela',
 		)
 
-		st.number_input(
+		st.selectbox(
 			"Subparcela",
+			subplots,
 			key='subpar',
-			value=None,
-			step=1,
-			min_value=1,
-			placeholder="Número de subparcela",
+			index=None,
+			placeholder="Clase de subparcela",
 			help='Identificador de la subparcela',
 		)
 
@@ -514,5 +573,8 @@ if st.session_state.site_ok:
 elif len(st.session_state.errors_site) > 0:
 	st.session_state.errors_site = "# Error\n\n" + st.session_state.errors_site
 	st.info(st.session_state.errors_site)
+
+else: 
+	rec_cont.empty()
 
 exit(0)
