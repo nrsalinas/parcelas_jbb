@@ -45,11 +45,12 @@ if 'submitted' not in st.session_state:
 ##########     Object lists    ##############
 #listas = pd.read_csv("Lista_categorias.csv")
 tabla_sitios = pd.read_csv("sitios.csv")
-sitios = tabla_sitios.sitio.tolist()
+tabla_sitios['name'] = tabla_sitios.codigo.apply(str) + '. ' + tabla_sitios.sitio.apply(str)
+sitios = tabla_sitios.name.tolist()
 
 wise_people = ['Lina Corrales', 'Esther Velásquez', 'Lina y Esther']
 
-digitizers = ['Lina', 'Esther', 'Nelson']
+digitizers = ['Esther', 'Dana', 'Jose', 'Lina', 'MariaP', 'Natalia', 'Nelson']
 
 subplots = ['2x2', '3x3', '6x6', '13x13', '20x20']
 
@@ -69,7 +70,12 @@ st.markdown("""
 
 #### Instrucciones
 
-Insertar las observaciones en la forma abajo. Una vez termine de digitar los datos de una observación, presione el botón :red[**Validar**] para validar los datos. Si existen errores, un mensaje aparecerá indicando la naturaleza del error. Los datos no serán guardados si son erróneos, así que deben ser corregidos para que puedan ser guardados.
+Inserte primero los datos pertinentes al sitio de estudio en la forma de abajo. Una vez termine de digitar los datos de un sitio, presione el botón :red[**Validar**] para validar los datos. Si existen errores, un mensaje aparecerá indicando la naturaleza del error. Si los datos son correctos, una nueva forma será desplegada con todos los campos relacionados con las propiedades de la parcela y los individuos.
+
+Al terminar de digitar todos los datos de un individuo presione el botón :red[**Validar**] de la segunda forma para verificar la información. Si existen errores a este nivel, la aplicación le indicará que se debe corregir. Si los datos del individuo son correctos, la aplicación desplegará los datos listos para ser insertados. Presione el botón :red[**Guardar**] para que la información sea enviada al repositorio remoto.
+
+Cada vez que se envian datos al repositorio solo se limpia la forma de individuos, no la de sitio, por lo cual puede ingresar la información de todos los individuos de una parcela sin tener que digitar los datos del sitio de nuevo. Si quiere cambiar los datos de la localidad (por ejemplo, después de insertar todos los registros de una parcela y va a digitar la información de la siguiente unidad muestral), presione el botón :red[**Cambiar localidad**] y comience de nuevo.
+
 
 """)
 

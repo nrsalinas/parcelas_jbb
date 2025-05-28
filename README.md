@@ -2,4 +2,4 @@
 ## Parcelas de vegetación
 ### JBB - Conservación in situ
 
-Link a la applicación : 
+Link a la applicación : https://jbb-flora-parcelas.streamlit.app/
