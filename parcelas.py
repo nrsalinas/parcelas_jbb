@@ -52,11 +52,11 @@ wise_people = ['Lina Corrales', 'Esther Velásquez', 'Lina y Esther']
 
 digitizers = ['Esther', 'Dana', 'Jose', 'Lina', 'MariaP', 'Natalia', 'Nelson']
 
-subplots = ['2x2', '3x3', '6x6', '13x13', '20x20']
+subplots = ['2x2 - 1', '2x2 - 2', '2x2 - 3', '2x2 - 4', '3x3', '6x6', '13x13', '20x20']
 
 id_observaciones = []
 
-growth_forms = ['Árbol', 'Arbusto', 'Hierba', 'Enredadera']
+growth_forms = ['Árbol', 'Arbusto', 'Hierba', 'Enredadera', 'Helecho', 'Liana']
 
 pheno = ['Estéril', 'Flor', 'Fruto']
 
@@ -163,22 +163,22 @@ def validate_rec():
 		st.session_state.errors_rec += 'La altura del individuo es un campo obligatorio para subparcelas no herbáceas rasantes.\n\n'
 		in_trouble = True
 
-	elif st.session_state.subpar == '3x3' and (st.session_state.alt < 0.5 or st.session_state.alt > 1.5):
+	elif st.session_state.subpar == '3x3' and (st.session_state.alt < 0.5 or st.session_state.alt > 1):
 
 		st.session_state.errors_rec += 'La altura del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
 		in_trouble = True
 
 
-	if st.session_state.subpar in ['6x6', '13x13', '20x20'] and st.session_state.cap is None:
-		st.session_state.errors_rec += 'La circuferencia a la altura de pecho es un campo obligatorio para subparcelas no herbáceas.\n\n'
+	if st.session_state.subpar in ['6x6', '13x13', '20x20'] and st.session_state.cap is None and st.session_state.grow in ['Árbol', 'Arbusto', 'Helecho', 'Liana']:
+		st.session_state.errors_rec += 'La circuferencia a la altura de pecho es un campo obligatorio para plantas leñosas en subparcelas no herbáceas.\n\n'
 		in_trouble = True
 
-	elif st.session_state.subpar == '6x6' and (st.session_state.cap < (2.5 / 3.14159) or st.session_state.cap > (5 / 3.14159)):
-		st.session_state.errors_rec += 'El CAP del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
+	elif st.session_state.subpar == '6x6' and (st.session_state.alt < 1 or st.session_state.alt > 2.5):
+		st.session_state.errors_rec += 'La altura del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
 		in_trouble = True
 
-	elif st.session_state.subpar == '13x13' and (st.session_state.cap < (5 / 3.14159) or st.session_state.cap > (10 / 3.14159)):
-		st.session_state.errors_rec += 'El CAP del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
+	elif st.session_state.subpar == '13x13' and (st.session_state.cap < (5 / 3.14159) or st.session_state.cap > (10 / 3.14159) or (st.session_state.alt < 2.5)) :
+		st.session_state.errors_rec += 'El CAP o la altura del individuo está por fuera del rango aceptable para la clase de subparcela.\n\n'
 		in_trouble = True
 
 	elif st.session_state.subpar == '20x20' and (st.session_state.cap < (10 / 3.14159)):
@@ -271,6 +271,7 @@ def submit():
 	
 	sh.append_row(row)
 	st.session_state.submitted = True
+	clear_rec()
 
 
 def clear_site():
@@ -284,6 +285,21 @@ def clear_site():
 	st.session_state.lon = None
 	st.session_state.obs_site = ''
 	st.session_state.site_ok = False
+
+def clear_rec():
+	st.session_state.par= None
+	st.session_state.subpar = None
+	st.session_state.ind = None
+	st.session_state.grow = None
+	st.session_state.morfo = None
+	st.session_state.alt = None
+	st.session_state.cap = None
+	st.session_state.copax = None
+	st.session_state.copay = None
+	st.session_state.cober = None
+	st.session_state.pheno = None
+	st.session_state.per_pheno = None
+	st.session_state.obs_ind = None
 
 
 with st.form(
@@ -399,8 +415,8 @@ if st.session_state.site_ok:
 
 	with rec_cont.form(
 	#with st.form(
-		"Transecto - registros",
-		clear_on_submit=True
+		"Parcela - registros",
+		clear_on_submit=False
 	):
 
 		st.number_input(
@@ -548,12 +564,13 @@ if st.session_state.site_ok:
 				f"Forma de crecimiento: {st.session_state.grow}",
 				f"Morfo: {st.session_state.morfo}",
 				f"Altura: {st.session_state.alt}",
-				#f"CAP: {st.session_state.cap}",
+				f"CAP: {st.session_state.cap}",
 				f"Copa X: {st.session_state.copax}",
 				f"Copa Y: {st.session_state.copay}",
 				f"Cobertura: {st.session_state.cober}",
 				f"Fenología: {st.session_state.pheno}",
-				#f"Observaciones individuo: {st.session_state.obs_ind}",
+				f"Porcentaje fenología: {st.session_state.per_pheno}",
+				f"Observaciones individuo: {st.session_state.obs_ind}",
 			]
 
 			st.markdown("\n\n".join(bits))
@@ -564,9 +581,6 @@ if st.session_state.site_ok:
 
 		if st.session_state.submitted:
 			pretty_data.empty()
-
-
-
 
 	else:	
 		if len(st.session_state.errors_rec) > 0:
