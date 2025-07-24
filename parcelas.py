@@ -20,8 +20,10 @@ import streamlit as st
 import pandas as pd
 import gspread
 import datetime
+import pytz
 
 gc = gspread.service_account_from_dict(st.secrets.credentials)
+tz = pytz.timezone('America/Bogota')
 
 if 'errors_site' not in st.session_state:
 	st.session_state.errors_site = ''
@@ -215,7 +217,7 @@ def set_site():
 def submit():
 	
 	sh = gc.open_by_key(st.secrets.table_link).worksheet(st.session_state.digitizer)
-	now = datetime.datetime.now()
+	now = datetime.datetime.now(tz)
 	#Sitio	Sector	Responsables	Observaciones sitio	Fecha	Hora inicio	Hora final	Latitud	Longitud	# Parcela	Subparcela	# ind.	Forma crecimiento	Morfo	Altura (m)	CAP (cm)	Copa X (cm)	Copa Y (cm)	% Cobertura	Fenología	% Fenología	Observaciones individuo	Digitador	Fecha digitación
 	row = [
 		st.session_state.site,
