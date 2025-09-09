@@ -16,6 +16,12 @@
 #
 ################################################################################
 
+#TODO###########################################################################
+#TODO	Verificar que los datos de los individuos no hayan sido ya cargados,
+#TODO	utilizando el número de parcela, el número de sitio, el número de 
+#TODO	individuo y el tipo de subparcela 
+#TODO###########################################################################
+
 import streamlit as st
 import pandas as pd
 import gspread
@@ -139,6 +145,19 @@ def validate_rec():
 	st.session_state.errors_rec = ""
 	in_trouble = False
 
+	sh = gc.open_by_key(st.secrets.table_link).worksheet("Datos")
+	prev = [
+		sh.col_values(1)[1:],
+		sh.col_values(10)[1:],
+		sh.col_values(11)[1:],
+		sh.col_values(12)[1:]
+	]
+
+	th_code = f"{st.session_state.site}_{st.session_state.par}_{st.session_state.subpar}_{st.session_state.ind}"
+	
+	
+	
+
 	if st.session_state.par is None:
 		st.session_state.errors_rec += 'El número de parcela es un campo obligatorio.\n\n'
 		in_trouble = True
@@ -171,7 +190,7 @@ def validate_rec():
 		in_trouble = True
 
 
-	if st.session_state.subpar in ['6x6', '13x13', '20x20'] and st.session_state.cap is None and st.session_state.grow in ['Árbol', 'Arbusto', 'Helecho', 'Liana']:
+	if st.session_state.subpar in ['13x13', '20x20'] and st.session_state.cap is None and st.session_state.grow in ['Árbol', 'Arbusto', 'Helecho', 'Liana']:
 		st.session_state.errors_rec += 'La circuferencia a la altura de pecho es un campo obligatorio para plantas leñosas en subparcelas no herbáceas.\n\n'
 		in_trouble = True
 
@@ -216,7 +235,8 @@ def set_site():
 
 def submit():
 	
-	sh = gc.open_by_key(st.secrets.table_link).worksheet(st.session_state.digitizer)
+	#sh = gc.open_by_key(st.secrets.table_link).worksheet(st.session_state.digitizer)
+	sh = gc.open_by_key(st.secrets.table_link).worksheet("Datos")
 	now = datetime.datetime.now(tz)
 	#Sitio	Sector	Responsables	Observaciones sitio	Fecha	Hora inicio	Hora final	Latitud	Longitud	# Parcela	Subparcela	# ind.	Forma crecimiento	Morfo	Altura (m)	CAP (cm)	Copa X (cm)	Copa Y (cm)	% Cobertura	Fenología	% Fenología	Observaciones individuo	Digitador	Fecha digitación
 	row = [
