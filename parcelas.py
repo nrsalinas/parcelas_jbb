@@ -145,7 +145,11 @@ def validate_rec():
 	st.session_state.errors_rec = ""
 	in_trouble = False
 
+	# First check if sample was already digitized
+	
+	th_code = f"{st.session_state.site}_{st.session_state.par}_{st.session_state.subpar}_{st.session_state.ind}"
 	sh = gc.open_by_key(st.secrets.table_link).worksheet("Datos")
+
 	prev = [
 		sh.col_values(1)[1:],
 		sh.col_values(10)[1:],
@@ -153,10 +157,17 @@ def validate_rec():
 		sh.col_values(12)[1:]
 	]
 
-	th_code = f"{st.session_state.site}_{st.session_state.par}_{st.session_state.subpar}_{st.session_state.ind}"
-	
-	
-	
+	for i in range(len(prev[0])):
+		th = ''
+		
+		for p in prev:
+			th += f'{p[i]}_'
+		
+		th = th.rstrip('_')
+		
+		if th == th_code:
+			st.session_state.errors_rec += 'Los datos del individuo ya fueron sistematizados.\n\n'
+			in_trouble = True
 
 	if st.session_state.par is None:
 		st.session_state.errors_rec += 'El número de parcela es un campo obligatorio.\n\n'
