@@ -89,6 +89,11 @@ Cada vez que se envian datos al repositorio solo se limpia la forma de individuo
 
 # This doesn't work in Linux -> :blue-background[:red[**Enviar**]] 
 
+@st.dialog("Error")
+def error_window(message):
+	st.write(message)
+
+
 def validate_site():
 
 	st.session_state.errors_site = ""
@@ -617,15 +622,17 @@ if st.session_state.site_ok:
 
 	else:	
 		if len(st.session_state.errors_rec) > 0:
-			st.session_state.errors_rec = "# Error\n\n" + st.session_state.errors_rec
-			st.info(st.session_state.errors_rec)
+			#st.session_state.errors_rec = "# Error\n\n" + st.session_state.errors_rec
+			#st.info(st.session_state.errors_rec)
+			error_window(st.session_state.errors_rec)
 
 		else:
 			pass
 
 elif len(st.session_state.errors_site) > 0:
-	st.session_state.errors_site = "# Error\n\n" + st.session_state.errors_site
-	st.info(st.session_state.errors_site)
+	#st.session_state.errors_site = "# Error\n\n" + st.session_state.errors_site
+	#st.info(st.session_state.errors_site)
+	error_window(st.session_state.errors_site)
 
 else: 
 	rec_cont.empty()
