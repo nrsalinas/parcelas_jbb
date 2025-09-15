@@ -230,7 +230,7 @@ def validate_rec():
 		st.session_state.errors_rec += 'El diámetro de copa vertical es un campo obligatorio para subparcelas no herbáceas rasantes.\n\n'
 		in_trouble = True
 
-	if st.session_state.subpar == '2x2' and st.session_state.cober is None:
+	if st.session_state.subpar.startswith('2x2') and st.session_state.cober is None:
 		st.session_state.errors_rec += 'La cobertura es un campo obligatorio para subparcelas de herbáceas rasantes.\n\n'
 		in_trouble = True
 
