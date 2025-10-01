@@ -420,7 +420,7 @@ with st.form(
 		max_value=4.838990,
 		min_value=3.725902,
 		step=0.00001,
-		format="%0.5f"
+		format="%0.6f"
 	)
 
 	st.number_input(
@@ -432,7 +432,7 @@ with st.form(
 		min_value=-74.2248,
 		max_value=-73.99194,
 		step=0.00001,
-		format="%0.5f"
+		format="%0.6f"
 	)
 
 	st.text_input(
