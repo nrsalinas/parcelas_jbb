@@ -418,7 +418,8 @@ with st.form(
 		placeholder="Latitud",
 		help='Latitud de ubicación del transecto en formato decimal (e.g., 3.09284)',
 		max_value=4.838990,
-		min_value=3.725902
+		min_value=3.725902,
+		step=0.0001
 	)
 
 	st.number_input(
@@ -429,6 +430,7 @@ with st.form(
 		help='Longitud de ubicación del transecto en formato decimal (e.g., -77.2360184)',
 		min_value=-74.2248,
 		max_value=-73.99194,
+		step=0.0001
 	)
 
 	st.text_input(
