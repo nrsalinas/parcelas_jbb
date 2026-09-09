@@ -1,0 +1,6 @@
+tipo_parcela,dap_min_cm,dap_max_cm,cap_min_cm,cap_max_cm,alt_min_m,alt_max_m
+2x2,NA,NA,NA,NA,NA,0.5
+3x3,NA,NA,NA,NA,0.5,1
+6x6,NA,NA,NA,NA,1,2.5
+13x13,5,10,15.707963267949,31.4159265358979,2.5,NA
+20x20,10,NA,31.4159265358979,NA,NA,NA
